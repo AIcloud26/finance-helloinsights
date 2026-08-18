@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="style.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="style.css"></noscript>
     <script src="ads-config.js" defer></script>
-    <script>window.IS_SUBDOMAIN = true;</script>
     <script src="config-loader.js" async></script>
     <style>
     /* ===== Page Header ===== */
@@ -29,7 +28,7 @@
     .featured-card-meta{font-size:.8rem;color:#888;margin-bottom:.3rem;}
     .featured-card-meta .cat{color:#ff6b35;font-weight:600;}
     .featured-card-excerpt{font-size:.86rem;color:#555;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin:0;}
-    .featured-read-more{display:inline-block;margin-top:.5rem;padding:5px 16px;background:#ff6b35;color:#fff;border:none;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;transition:background .2s;}
+    .featured-read-more{display:inline-block;margin-top:.5rem;padding:6px 20px;background:#ff6b35;color:#fff;border:none;border-radius:8px;font-size:.86rem;font-weight:600;cursor:pointer;transition:background .2s;}
     .featured-read-more:hover{background:#e55a2b;}
     /* ===== Hero Intro — Left Aligned ===== */
     .hero-intro{max-width:1100px;margin:0 auto 2rem;padding:0 1rem;text-align:left;color:#444;line-height:1.75;font-size:0.95rem;}
@@ -44,7 +43,7 @@
     .latest-card-meta{font-size:.82rem;color:#888;margin-bottom:.35rem;}
     .latest-card-meta .cat{color:#ff6b35;font-weight:600;}
     .latest-card-excerpt{font-size:.88rem;color:#555;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin:0;}
-    .read-more-btn-inline{display:inline-block;margin-top:.7rem;padding:5px 16px;background:#ff6b35;color:#fff;border:none;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;transition:background .2s;}
+    .read-more-btn-inline{display:inline-block;margin-top:.7rem;padding:7px 22px;background:#ff6b35;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer;transition:background .2s;}
     .read-more-btn-inline:hover{background:#e55a2b;}
     /* ===== Mobile Header Optimization ===== */
     @media(max-width:768px){
@@ -71,11 +70,11 @@
         .latest-card-meta{font-size:0.76rem!important;margin-bottom:0.25rem!important;}
         .latest-card-excerpt{font-size:0.82rem!important;line-height:1.4!important;}
     }
-    /* ===== Ad Slots ===== */
-    .ad-slot{margin:1.2rem auto;text-align:center;min-height:0;overflow:hidden;transition:all 0.3s ease;}
-    .ad-slot.has-ad{min-height:250px;}
-    .ad-slot.ad-hidden{display:none!important;}
-    @media(max-width:768px){.ad-slot.has-ad{min-height:200px;}}
+    /* ===== Ad Slot Placeholders — min-height 250px to prevent CLS ===== */
+    .ad-slot{margin:1.2rem auto;text-align:center;min-height:250px;display:flex;align-items:center;justify-content:center;}
+    @media(max-width:768px){.ad-slot{min-height:200px;margin:0.8rem auto;}}
+    /* ===== Inline Ad Banner (between article cards) ===== */
+    .inline-ad-banner{grid-column:1/-1;margin:0.5rem 0;}
     </style>
 </head>
 <body>
@@ -124,6 +123,7 @@
         </div>
     </header>
     <main class="container">
+        <!-- Ad: Native Top (728×90 / responsive) -->
         <div class="ad-slot" data-ad-slot="native-top"></div>
         <div class="page-header">
             <h1 class="site-tagline" id="siteTagline"></h1>
@@ -133,10 +133,11 @@
             <span id="searchText"></span>
             <button onclick="clearSearch()" style="margin-left:10px;background:#ff6b35;color:white;border:none;padding:2px 10px;border-radius:4px;cursor:pointer;">Clear</button>
         </div>
+        <!-- Featured Insights -->
         <div class="featured-section" id="featuredSection">
             <h2>Featured Insights</h2>
             <div id="featuredCards"></div>
-            <div id="featuredReadMoreWrap" style="display:none;text-align:right;">
+            <div id="featuredReadMoreWrap" style="display:none;">
                 <button class="featured-read-more" id="featuredReadMoreBtn" onclick="expandFeatured()">Read More</button>
             </div>
         </div>
@@ -144,15 +145,20 @@
             <div class="loading" id="loading"></div>
         </div>
         <div class="pagination" id="pagination"></div>
-        <div class="ad-slot" data-ad-slot="banner-mid"></div>
+        <!-- Ad: Interstitial (page turn) -->
+        <div class="ad-slot" data-ad-slot="interstitial"></div>
+        <!-- Latest Insights (moved to bottom, 3 + Read More) -->
         <div class="latest-section" id="latestSection">
             <h2>Latest Insights</h2>
             <div id="latestCards"></div>
-            <div id="latestReadMoreWrap" style="text-align:right;display:none;">
+            <div id="latestReadMoreWrap" style="text-align:center;display:none;">
                 <button class="read-more-btn-inline" id="latestReadMoreBtn" onclick="expandLatestInsights()">Read More</button>
             </div>
         </div>
+        <!-- Ad: Banner Bottom (above footer) -->
         <div class="ad-slot" data-ad-slot="banner-bottom"></div>
+        <!-- Ad: Anchor (bottom floating) -->
+        <div class="ad-slot" data-ad-slot="anchor" style="position:fixed;bottom:0;left:0;right:0;z-index:999;"></div>
     </main>
     <footer class="footer">
         <div class="footer-content">
@@ -185,18 +191,18 @@
         'finance': {
             name: 'Finance',
             tagline: 'FINANCE NEWS & INSIGHTS',
-            aboutText: 'Your trusted source for the latest insights in Technology, Finance, AI Tools, and Health & Lifestyle.',
+            aboutText: 'Your trusted source for the latest finance news, market analysis, and investment insights.',
             fallbackImage: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=400&fit=crop',
             jsonFile: 'articles-finance.json',
             titleSuffix: 'Finance News, Investing & Market Insights | HelloInsights',
             metaDesc: 'Explore personal finance, investing, markets, banking, fintech, economic trends and money management insights from HelloInsights Finance.',
-            heroIntro: '<p>Finance influences how we save, invest, spend, and plan for the future. HelloInsights Finance explores <strong>Personal Finance, Investing, Markets, Banking, Fintech, Economy, and Money Management</strong>, connecting practical financial knowledge with broader trends shaping money and markets.</p><p>Our editorial coverage goes beyond headlines to explain why financial developments matter — from investment strategies and banking innovation to inflation, interest rates, and economic shifts.</p>',
+            heroIntro: '<p>Finance influences how we save, invest, spend, and plan for the future. HelloInsights Finance explores <strong>Personal Finance, Investing, Markets, Banking, Fintech, Economy, and Money Management</strong>, connecting practical financial knowledge with broader trends shaping money and markets.</p><p>Our editorial coverage goes beyond headlines to explain why financial developments matter. We explore investment strategies, market movements, banking innovation, digital finance, inflation, interest rates, and economic trends, helping readers better understand changing financial conditions and make more informed decisions.</p>',
             gaId: 'G-FINANCE-XXXXXXX'
         },
         'technology': {
             name: 'Technology',
             tagline: 'TECHNOLOGY NEWS & INSIGHTS',
-            aboutText: 'Your trusted source for the latest insights in Technology, Finance, AI Tools, and Health & Lifestyle.',
+            aboutText: 'Your trusted source for the latest technology news, product reviews, and industry trends.',
             fallbackImage: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=400&fit=crop',
             jsonFile: 'articles-technology.json',
             titleSuffix: 'Technology News & Innovation Insights | HelloInsights',
@@ -207,7 +213,7 @@
         'ai-tools': {
             name: 'AI Tools',
             tagline: 'AI TOOLS NEWS & INSIGHTS',
-            aboutText: 'Your trusted source for the latest insights in Technology, Finance, AI Tools, and Health & Lifestyle.',
+            aboutText: 'Your trusted source for the latest AI tools news, reviews, and industry insights.',
             fallbackImage: 'https://images.unsplash.com/photo-1677442136019-21780ecf995?w=600&h=400&fit=crop',
             jsonFile: 'articles-ai-tools.json',
             titleSuffix: 'AI Tools News & Reviews | HelloInsights',
@@ -218,7 +224,7 @@
         'health-lifestyle': {
             name: 'Health & Lifestyle',
             tagline: 'HEALTH & LIFESTYLE INSIGHTS',
-            aboutText: 'Your trusted source for the latest insights in Technology, Finance, AI Tools, and Health & Lifestyle.',
+            aboutText: 'Your trusted source for the latest health news, wellness tips, and lifestyle insights.',
             fallbackImage: 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=600&h=400&fit=crop',
             jsonFile: 'articles-health-lifestyle.json',
             titleSuffix: 'Health & Lifestyle Insights | HelloInsights',
@@ -250,12 +256,12 @@
     var sub = host.split('.')[0];
     var CFG = SITE_CONFIGS[sub] || SITE_CONFIGS['finance'];
     var CAT_ID = sub;
-    // window.IS_SUBDOMAIN already set in <head> before config-loader.js loads
+    window.IS_SUBDOMAIN = true;
     // ===== APPLY CONFIG TO PAGE =====
     document.title = CFG.titleSuffix;
     document.querySelector('meta[name="description"]').setAttribute('content', CFG.metaDesc);
     document.getElementById('siteTagline').textContent = CFG.tagline;
-    document.getElementById('footerAboutTitle').textContent = 'About HelloInsights';
+    document.getElementById('footerAboutTitle').textContent = 'About ' + CFG.name;
     document.getElementById('footerAboutText').textContent = CFG.aboutText;
     // Hero Intro
     var heroIntroEl = document.getElementById('heroIntro');
@@ -284,9 +290,83 @@
     fallbackImages[CAT_ID] = CFG.fallbackImage;
     var defaultFallback = CFG.fallbackImage;
     var allArticlesCache = [];
+
+    // --- Image Deduplication ---
+    var usedImageIds = {};
+    var altImages = {
+        'technology': [
+            'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&h=338&fit=crop',
+            'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=600&h=338&fit=crop',
+            'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=600&h=338&fit=crop'
+        ],
+        'finance': [
+            'https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?w=600&h=338&fit=crop',
+            'https://images.unsplash.com/photo-1604594849809-dfedbc827105?w=600&h=338&fit=crop',
+            'https://images.unsplash.com/photo-1526304654461-830e39fabc9a?w=600&h=338&fit=crop'
+        ],
+        'ai-tools': [
+            'https://images.unsplash.com/photo-1655720828018-edd2da095b5c?w=600&h=338&fit=crop',
+            'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&h=338&fit=crop',
+            'https://images.unsplash.com/photo-1535378917042-10a22c95931a?w=600&h=338&fit=crop'
+        ],
+        'health-lifestyle': [
+            'https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=600&h=338&fit=crop',
+            'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&h=338&fit=crop',
+            'https://images.unsplash.com/photo-1511909525232-61113c912358?w=600&h=338&fit=crop'
+        ]
+    };
+
+    function extractUnsplashId(url) {
+        if (!url || url.indexOf('images.unsplash.com/') === -1) return null;
+        var match = url.match(/photo-[A-Za-z0-9]+/);
+        return match ? match[0] : null;
+    }
+
+    function getUniqueImage(article) {
+        var img = article.image || '';
+        var cat = article.category || '';
+        var imgId = extractUnsplashId(img);
+
+        if (img && imgId && !usedImageIds[imgId]) {
+            usedImageIds[imgId] = true;
+            return img;
+        }
+
+        if (img && imgId && usedImageIds[imgId]) {
+            var variant = img;
+            if (variant.indexOf('w=600') !== -1) {
+                variant = variant.replace('w=600', 'w=500').replace('h=338', 'h=280');
+                var variantId = imgId + '-v1';
+                if (!usedImageIds[variantId]) {
+                    usedImageIds[variantId] = true;
+                    return variant;
+                }
+                variant = variant.replace('w=500', 'w=700').replace('h=280', 'h=400');
+                variantId = imgId + '-v2';
+                if (!usedImageIds[variantId]) {
+                    usedImageIds[variantId] = true;
+                    return variant;
+                }
+            }
+        }
+
+        var pool = altImages[cat] || [];
+        for (var j = 0; j < pool.length; j++) {
+            var altId = extractUnsplashId(pool[j]);
+            if (altId && !usedImageIds[altId]) {
+                usedImageIds[altId] = true;
+                return pool[j];
+            }
+        }
+
+        if (imgId) { usedImageIds[imgId] = true; }
+        return img || getFallbackImage(cat);
+    }
+
     var latestExpanded = false;
     var featuredExpanded = false;
     var allFeaturedArticles = [];
+    // Format date
     function formatDate(dateStr) {
         if (!dateStr) return '';
         var parts = dateStr.split('-');
@@ -297,44 +377,45 @@
     }
     function getFallbackImage(cat) { return fallbackImages[cat] || defaultFallback; }
     function createArticleCard(article) {
-        if (!article || !article.id) return '';
-        var catName = categoryNames[article.category] || article.category || '';
+        var catName = categoryNames[article.category] || article.category;
         var fb = getFallbackImage(article.category);
         var dateDisplay = formatDate(article.date);
-        var title = article.title || 'Untitled';
-        var image = article.image || fb;
-        var excerpt = article.excerpt || '';
+        var imgSrc = getUniqueImage(article);
         return '<article class="article-card">' +
-            '<div class="card-image"><img src="' + image + '" alt="' + title + '" width="600" height="400" loading="lazy" decoding="async" onerror="this.src=\'' + fb + '\'"></div>' +
+            '<div class="card-image"><img src="' + imgSrc + '" alt="' + article.title + '" width="600" height="400" loading="lazy" decoding="async" onerror="this.src=\'' + fb + '\'"></div>' +
             '<div class="card-content">' +
             '<span class="card-category">' + catName + '</span>' +
-            '<h3 class="card-title"><a href="article.html?id=' + article.id + '">' + title + '</a></h3>' +
-            '<p class="card-excerpt">' + excerpt + '</p>' +
+            '<h3 class="card-title"><a href="article.html?id=' + article.id + '">' + article.title + '</a></h3>' +
+            '<p class="card-excerpt">' + article.excerpt + '</p>' +
             '<div class="card-meta"><span>' + dateDisplay + '</span></div>' +
             '<a href="article.html?id=' + article.id + '" class="read-more-btn">Read More</a>' +
             '</div></article>';
+    }
+    // Inline ad banner HTML
+    function createInlineAdBanner(slotId) {
+        return '<div class="inline-ad-banner"><div class="ad-slot" data-ad-slot="' + slotId + '"></div></div>';
     }
     function renderPagination(total) {
         var pages = Math.ceil(total / ARTICLES_PER_PAGE);
         var el = document.getElementById('pagination');
         if (!el || pages <= 1) { if (el) el.innerHTML = ''; return; }
         var h = '';
-        if (currentPage > 1) h += '<a href="#" class="page-btn" onclick="changePage(' + (currentPage - 1) + ');return false;">‹</a>';
+        if (currentPage > 1) h += '<a href="javascript:void(0)" class="page-btn" onclick="changePage(' + (currentPage - 1) + ');return false;">‹</a>';
         else h += '<span class="page-btn disabled">‹</span>';
         var range = 2;
         var start = Math.max(2, currentPage - range);
         var end = Math.min(pages - 1, currentPage + range);
         if (currentPage === 1) h += '<span class="page-btn active">1</span>';
-        else h += '<a href="#" class="page-btn" onclick="changePage(1);return false;">1</a>';
+        else h += '<a href="javascript:void(0)" class="page-btn" onclick="changePage(1);return false;">1</a>';
         if (start > 2) h += '<span class="page-btn disabled" style="cursor:default;">…</span>';
         for (var i = start; i <= end; i++) {
             if (i === currentPage) h += '<span class="page-btn active">' + i + '</span>';
-            else h += '<a href="#" class="page-btn" onclick="changePage(' + i + ');return false;">' + i + '</a>';
+            else h += '<a href="javascript:void(0)" class="page-btn" onclick="changePage(' + i + ');return false;">' + i + '</a>';
         }
         if (end < pages - 1) h += '<span class="page-btn disabled" style="cursor:default;">…</span>';
         if (currentPage === pages) h += '<span class="page-btn active">' + pages + '</span>';
-        else h += '<a href="#" class="page-btn" onclick="changePage(' + pages + ');return false;">' + pages + '</a>';
-        if (currentPage < pages) h += '<a href="#" class="page-btn" onclick="changePage(' + (currentPage + 1) + ');return false;">›</a>';
+        else h += '<a href="javascript:void(0)" class="page-btn" onclick="changePage(' + pages + ');return false;">' + pages + '</a>';
+        if (currentPage < pages) h += '<a href="javascript:void(0)" class="page-btn" onclick="changePage(' + (currentPage + 1) + ');return false;">›</a>';
         else h += '<span class="page-btn disabled">›</span>';
         el.innerHTML = h;
     }
@@ -350,7 +431,10 @@
             currentPage = p;
             fetchArticlesForPage(p);
         }
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        var target = document.getElementById('articleGrid');
+        if (target) {
+            window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
+        }
     }
     function handleSearch() {
         var input = document.getElementById('searchInput');
@@ -391,19 +475,21 @@
         var loading = document.getElementById('loading');
         if (loading) loading.remove();
         if (!grid) return;
-        var valid = articles.filter(function(a) { return a && a.id; });
-        if (valid.length === 0) {
+        if (articles.length === 0) {
             grid.innerHTML = '<p style="text-align:center;grid-column:1/-1;padding:3rem;">No articles found.</p>';
             document.getElementById('pagination').innerHTML = '';
             return;
         }
         var html = '';
-        for (var i = 0; i < valid.length; i++) {
-            try { html += createArticleCard(valid[i]); } catch(e) { console.warn('Card render error:', e); }
+        for (var i = 0; i < articles.length; i++) {
+            html += createArticleCard(articles[i]);
+            // Insert inline ad banners after 3rd and 6th card
+            if (i === 2) html += createInlineAdBanner('banner-mid-1');
+            if (i === 5) html += createInlineAdBanner('banner-mid-2');
         }
-        if (!html) { grid.innerHTML = '<p style="text-align:center;grid-column:1/-1;padding:3rem;">No articles found.</p>'; document.getElementById('pagination').innerHTML = ''; return; }
         grid.innerHTML = html;
         renderPagination(allArticlesCache.length);
+        // Re-trigger ad render for dynamically inserted slots
         if (window.AdConfig && typeof window.AdConfig.renderAll === 'function') {
             window.AdConfig.renderAll();
         }
@@ -413,24 +499,26 @@
         var loading = document.getElementById('loading');
         if (loading) loading.remove();
         if (!grid) return;
-        var validAll = articles.filter(function(a) { return a && a.id; });
-        if (validAll.length === 0) {
+        if (articles.length === 0) {
             grid.innerHTML = '<p style="text-align:center;grid-column:1/-1;padding:3rem;color:#666;">No articles found for "' + searchQuery + '".</p>';
             document.getElementById('pagination').innerHTML = '';
             return;
         }
         var start = (currentPage - 1) * ARTICLES_PER_PAGE;
-        var page = validAll.slice(start, start + ARTICLES_PER_PAGE);
+        var page = articles.slice(start, start + ARTICLES_PER_PAGE);
         var html = '';
         for (var i = 0; i < page.length; i++) {
             html += createArticleCard(page[i]);
+            if (i === 2) html += createInlineAdBanner('banner-mid-1');
+            if (i === 5) html += createInlineAdBanner('banner-mid-2');
         }
         grid.innerHTML = html;
-        renderPagination(validAll.length);
+        renderPagination(articles.length);
         if (window.AdConfig && typeof window.AdConfig.renderAll === 'function') {
             window.AdConfig.renderAll();
         }
     }
+    // ===== Featured Insights =====
     function renderFeaturedInsights(articles) {
         allFeaturedArticles = articles;
         var container = document.getElementById('featuredCards');
@@ -441,12 +529,11 @@
         var html = '';
         for (var i = 0; i < showCount; i++) {
             var a = articles[i];
-            if (!a || !a.id) continue;
-            var catName = categoryNames[a.category] || a.category || '';
+            var catName = categoryNames[a.category] || a.category;
             html += '<a class="featured-card" href="article.html?id=' + a.id + '">' +
-                '<p class="featured-card-title">' + (a.title || '') + '</p>' +
+                '<p class="featured-card-title">' + a.title + '</p>' +
                 '<p class="featured-card-meta"><span class="cat">' + catName + '</span> · ' + formatDate(a.date) + '</p>' +
-                '<p class="featured-card-excerpt">' + (a.excerpt || '') + '</p>' +
+                '<p class="featured-card-excerpt">' + a.excerpt + '</p>' +
                 '</a>';
         }
         container.innerHTML = html;
@@ -462,6 +549,7 @@
         featuredExpanded = true;
         renderFeaturedInsights(allFeaturedArticles);
     }
+    // ===== Latest Insights (bottom, 3 + Read More) =====
     var allLatestArticles = [];
     function renderLatestInsights(articles) {
         allLatestArticles = articles;
@@ -473,12 +561,11 @@
         var html = '';
         for (var i = 0; i < showCount; i++) {
             var a = articles[i];
-            if (!a || !a.id) continue;
-            var catName = categoryNames[a.category] || a.category || '';
+            var catName = categoryNames[a.category] || a.category;
             html += '<a class="latest-card" href="article.html?id=' + a.id + '">' +
-                '<p class="latest-card-title">' + (a.title || '') + '</p>' +
+                '<p class="latest-card-title">' + a.title + '</p>' +
                 '<p class="latest-card-meta"><span class="cat">' + catName + '</span> · ' + formatDate(a.date) + '</p>' +
-                '<p class="latest-card-excerpt">' + (a.excerpt || '') + '</p>' +
+                '<p class="latest-card-excerpt">' + a.excerpt + '</p>' +
                 '</a>';
         }
         container.innerHTML = html;
@@ -494,13 +581,13 @@
         latestExpanded = true;
         renderLatestInsights(allLatestArticles);
     }
-    fetch(CFG.jsonFile + '?v=' + Date.now())
+    // ===== Load Articles =====
+    fetch(CFG.jsonFile)
         .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
         .then(function(data) {
-            allArticlesCache = (data.articles || []).filter(function(a) { return a && a.id; });
+            allArticlesCache = data.articles || [];
             allArticlesCache.sort(function(a, b) {
-                var c = (b.date || '').localeCompare(a.date || '');
-                return c !== 0 ? c : (Math.random() - 0.5);
+                return (b.date || '').localeCompare(a.date || '');
             });
             renderFeaturedInsights(allArticlesCache.slice(0, 12));
             renderLatestInsights(allArticlesCache.slice(0, 10));
@@ -512,6 +599,7 @@
             var grid = document.getElementById('articleGrid');
             if (grid) grid.innerHTML = '<p style="text-align:center;grid-column:1/-1;padding:3rem;color:#999;">Unable to load articles: ' + err.message + '</p>';
         });
+    // Config loader integration
     if (typeof loadSiteConfig === 'function') {
         loadSiteConfig(function(config) {
             if (config && config.categories) {
